@@ -3,12 +3,12 @@ require_relative "lib/nova/version"
 Gem::Specification.new do |spec|
   spec.name        = "nova"
   spec.version     = Nova::VERSION
-  spec.authors     = [ "dstuckey-uoe" ]
+  spec.authors     = [ "don-stuckey" ]
   spec.email       = [ "dstuckey@ed.ac.uk" ]
   spec.homepage    = "TODO"
   spec.summary     = "TODO: Summary of Nova."
   spec.description = "TODO: Description of Nova."
-  spec.license     = "MIT"
+  spec.license     = "GNU AFFERO GENERAL PUBLIC LICENSE Version 3"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
   # to allow pushing to a single host or delete this section to allow pushing to any host.
@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+    Dir["{app,config,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
   end
 
   spec.add_dependency "rails", ">= 8.0.1"
