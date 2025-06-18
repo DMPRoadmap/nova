@@ -5,9 +5,9 @@ Gem::Specification.new do |spec|
   spec.version     = Nova::VERSION
   spec.authors     = [ "don-stuckey" ]
   spec.email       = [ "dstuckey@ed.ac.uk" ]
-  spec.homepage    = "TODO"
-  spec.summary     = "TODO: Summary of Nova."
-  spec.description = "TODO: Description of Nova."
+  spec.homepage    = ""
+  spec.summary     = ""
+  spec.description = ""
   spec.license     = "GNU AFFERO GENERAL PUBLIC LICENSE Version 3"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
