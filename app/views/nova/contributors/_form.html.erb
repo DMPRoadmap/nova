@@ -1,0 +1,87 @@
+<%# locals form, plan, contributor %>
+
+<%
+roles_tooltip = _("Select each role that applies to the contributor.")
+%>
+
+<!-- orcid -->
+<div class="form-control mb-3 row">
+  <% orcid = ContributorPresenter.orcid(contributor: contributor) %>
+  <%= form.fields_for :identifiers, orcid do |orcid_fields| %>
+    <%= orcid_fields.hidden_field :id %>
+    <%= orcid_fields.hidden_field :identifier_scheme_id, value: orcid.identifier_scheme_id %>
+    <div class="col-md-6">
+      <%= orcid_fields.label(:value, _("ORCID iD (if not known, please leave blank)"), class: "form-label") %>
+      <%= orcid_fields.text_field :value, class: "form-control", placeholder: "e.g. 0000-0000-0000-0000" %>
+      
+    </div>
+    <div class="col-md-5 align-self-end">
+      <%= button_tag(_("Search ORCID iD"),
+      type: "button",
+      class: "btn btn-primary mt-6 mb-0",
+      id: "search_orcid_btn") %>
+    </div>
+  <% end %>
+</div>
+
+<!--name and email-->
+<div class="form-control mb-3 row">
+  <div class="col-md-6">
+    <%= form.label(:name, (' <span class="text-danger">*</span> ' + _("Name")).html_safe, class: "form-label") %>
+    <%= form.text_field :name, class: "form-control", spellcheck: true %>
+  </div>
+  <div class="col-md-6">
+    <%= form.label(:email, (' <span class="text-danger">*</span> ' + _("Email")).html_safe, class: "form-label") %>
+    <%= form.email_field :email, class: "form-control" %>
+  </div>
+</div>
+
+<!-- org -->
+<div class="form-control mb-3 row" id="contributor-org-controls">
+  <div class="col-md-12">
+    <%= render partial: org_partial,
+               locals: { form: form,
+                         orgs: orgs,
+                         default_org: contributor.org,
+                         required: false,
+                         label: _("Organisation") } %>
+  </div>
+</div>
+
+<div class="form-control mb-3 row">
+  <div class="col-md-12">
+    <fieldset>
+      <legend>
+        <span class="red">*</span> <%= _("Roles") %>
+      </legend>
+      <p><%= roles_tooltip.html_safe %></p>
+        <div class="row">
+      <% roles = ContributorPresenter.roles_for_radio(contributor: contributor) %>
+      <% roles.each do |hash| %>
+        <div class="col-md-3">
+          <div class="form-check">
+            <%= form.check_box hash.keys.first.to_sym,
+                               value: hash.values.first,
+                               data: { toggle: "tooltip" },
+                               title: ContributorPresenter.role_tooltip(symbol: hash.keys.first),
+                               aria: { label: ContributorPresenter.role_symbol_to_string(symbol: hash.keys.first) } %>
+            <%= ContributorPresenter.role_symbol_to_string(symbol: hash.keys.first) %>
+          </div>
+        </div>
+      <% end %>
+      </div>
+    </fieldset>
+  </div>
+</div>
+
+<div class="form-control mb-3 row">
+  <div class="col-md-6">
+    <%= form.button(_("Save"), class: "btn btn-secondary", type: "submit") %>
+    <% unless contributor.new_record? %>
+      <%= link_to _("Remove"), plan_contributor_path(plan, contributor),
+                               method: :delete, class: "btn btn-secondary" %>
+      <% end %>
+      <%= link_to _("Cancel"), plan_contributors_path(plan),
+                               class: "btn btn-secondary" %>
+  </div>
+</div>
