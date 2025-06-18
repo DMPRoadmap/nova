@@ -5,20 +5,10 @@ Gem::Specification.new do |spec|
   spec.version     = Nova::VERSION
   spec.authors     = [ "don-stuckey" ]
   spec.email       = [ "dstuckey@ed.ac.uk" ]
-  spec.homepage    = ""
-  spec.summary     = ""
-  spec.description = ""
+  spec.summary     = "Networked ORCiD Verification & Access"
   spec.license     = "GNU AFFERO GENERAL PUBLIC LICENSE Version 3"
-
-  spec.metadata["allowed_push_host"] = ""
-
-  spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = ""
-  spec.metadata["changelog_uri"] = ""
-
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     Dir["{app,config,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
   end
-
   spec.add_dependency "rails", ">= 8.0.1"
 end
