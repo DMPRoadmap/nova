@@ -20,7 +20,7 @@ module Nova
     def new
       authorize @plan
       default_org = @plan.org.present? ? @plan.org : current_user.org
-      @contributor = Contributor.new(plan: @plan, org: default_org)
+      @contributor = Nova::Contributor.new(plan: @plan, org: default_org)
     end
 
     # GET /plans/:plan_id/contributors/:id/edit
@@ -36,7 +36,7 @@ module Nova
       args = translate_roles(hash: contributor_params)
       args = process_org(hash: args)
       if args.blank?
-        @contributor = Contributor.new(args)
+        @contributor = Nova::Contributor.new(args)
         @contributor.errors.add(:affiliation, 'invalid')
         flash[:alert] = failure_message(@contributor, _('add'))
         render :new
@@ -46,10 +46,10 @@ module Nova
         # Check if ORCID exists and validate using the orcid_validator class method
         if args[:identifiers_attributes].present?
           orcid_value = args[:identifiers_attributes][:'0'][:value]
-          orcid_id = OrcidValidator.extract_orcid_id(orcid_value)
+          orcid_id = Nova::OrcidValidator.extract_orcid_id(orcid_value)
 
-          unless orcid_id && OrcidValidator.orcid_id_is_valid?(orcid_id)  
-            @contributor = Contributor.new(args)
+          unless orcid_id && Nova::OrcidValidator.orcid_id_is_valid?(orcid_id)  
+            @contributor = Nova::Contributor.new(args)
             @contributor.errors.add(:base, 'ORCID iD is invalid')
             flash[:alert] = failure_message(@contributor, _('add'))
             render :new
@@ -58,7 +58,7 @@ module Nova
         end
         
         args[:plan_id] = @plan.id
-        @contributor = Contributor.new(args)
+        @contributor = Nova::Contributor.new(args)
         stash_orcid
 
         if @contributor.save
@@ -84,10 +84,10 @@ module Nova
       # Check if ORCID exists and validate using the orcid_validator class method
       if args[:identifiers_attributes].present?
         orcid_value = args[:identifiers_attributes][:'0'][:value]
-        orcid_id = OrcidValidator.extract_orcid_id(orcid_value)
+        orcid_id = Nova::OrcidValidator.extract_orcid_id(orcid_value)
 
-        unless orcid_id && OrcidValidator.orcid_id_is_valid?(orcid_id)  
-          @contributor = Contributor.new(args)
+        unless orcid_id && Nova::OrcidValidator.orcid_id_is_valid?(orcid_id)  
+          @contributor = Nova::Contributor.new(args)
           @contributor.errors.add(:base, 'ORCID iD is invalid')
           flash[:alert] = failure_message(@contributor, _('add'))
           render :new
@@ -121,7 +121,7 @@ module Nova
 
     def contributor_params
       base_params = %i[name email phone org_id org_name org_crosswalk]
-      role_params = Contributor.new.all_roles
+      role_params = Nova::Contributor.new.all_roles
 
       params.require(:contributor).permit(
         base_params,
@@ -132,7 +132,7 @@ module Nova
 
     # Translate the check boxes values of "1" and "0" to true/false
     def translate_roles(hash:)
-      roles = Contributor.new.all_roles
+      roles = Nova::Contributor.new.all_roles
       roles.each { |role| hash[role.to_sym] = hash[role.to_sym] == '1' }
       hash
     end
@@ -190,7 +190,7 @@ module Nova
     end
 
     def fetch_contributor
-      @contributor = Contributor.find_by(id: params[:id])
+      @contributor = Nova::Contributor.find_by(id: params[:id])
       return true if @contributor.present? &&
                     @plan.contributors.include?(@contributor)
 
