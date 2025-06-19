@@ -33,6 +33,8 @@ module Nova
     include ValidationMessages
     include Identifiable
 
+    self.table_name = 'contributors'
+
     # ================
     # = Associations =
     # ================
