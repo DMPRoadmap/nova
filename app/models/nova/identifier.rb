@@ -74,8 +74,8 @@ module Nova
     # rubocop:disable Metrics/AbcSize
     def value=(val)
       if identifier_scheme&.name == 'orcid'
-        orcid_id = OrcidValidator.extract_orcid_id(val)
-        if orcid_id && OrcidValidator.orcid_id_is_valid?(orcid_id)
+        orcid_id = Nova::OrcidValidator.extract_orcid_id(val)
+        if orcid_id && Nova::OrcidValidator.orcid_id_is_valid?(orcid_id)
           prefix = ENV["ORCID_SANDBOX"] ? 'https://sandbox.orcid.org/' : identifier_scheme.identifier_prefix
           val = prefix + orcid_id
         end
@@ -129,14 +129,14 @@ module Nova
     # Verify the uniqueness of :value across :identifiable
     def value_uniqueness_without_scheme
       # if scheme is nil, then just unique for identifiable
-      return unless Identifier.where(identifiable: identifiable, value: value).any?
+      return unless Nova::Identifier.where(identifiable: identifiable, value: value).any?
 
       errors.add(:value, _('must be unique'))
     end
 
     # Ensure that the identifiable only has one identifier for the scheme
     def value_uniqueness_with_scheme
-      if new_record? && Identifier.where(identifier_scheme: identifier_scheme,
+      if new_record? && Nova::Identifier.where(identifier_scheme: identifier_scheme,
                                         identifiable: identifiable).any?
         errors.add(:identifier_scheme, _('already assigned a value'))
       end
