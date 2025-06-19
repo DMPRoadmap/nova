@@ -1,4 +1,5 @@
 Nova::Engine.routes.draw do
-  # get orcid record for contributor
-  get "orcid_records(/:orcid_id)", to: "orcid_records#show"
+  resources: contributors, to: "nova/contributors"
+  
+  get "orcid_records(/:orcid_id)", to: "nova/orcid_records#show"
 end
