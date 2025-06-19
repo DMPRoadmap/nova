@@ -7,5 +7,6 @@ module Nova
         prepend_view_path Nova::Engine.root.join("app/views")
       end
     end
+
   end
 end

@@ -33,15 +33,17 @@ module Nova
     # = Validations =
     # ===============
 
-    validates :value, presence: { message: PRESENCE_MESSAGE }
+    validates :value, presence: { message: ::ValidationMessages::PRESENCE_MESSAGE }
 
-    validates :identifiable, presence: { message: PRESENCE_MESSAGE }
+    validates :identifiable, presence: { message: ::ValidationMessages::PRESENCE_MESSAGE }
 
     validate :value_uniqueness_with_scheme, if: :schemed?
 
     validate :value_uniqueness_without_scheme, unless: :schemed?
 
-    validates :value, orcid: true, allow_blank: true, if: -> { identifier_scheme&.name == 'orcid' }
+    # validates :value, orcid: true, allow_blank: true, if: -> { identifier_scheme&.name == 'orcid' }
+
+    validates_with Nova::OrcidValidator, attributes: [:value], allow_blank: true, if: -> { identifier_scheme&.name == 'orcid' }
 
     # ===============
     # = Scopes =
