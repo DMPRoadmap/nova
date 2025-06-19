@@ -5,12 +5,12 @@ module Nova
 
       Rails.logger.debug "ds_orcid_value: #{orcid_value}"
 
-      orcid_id = OrcidValidator.extract_orcid_id(orcid_value)
+      orcid_id = Nova::OrcidValidator.extract_orcid_id(orcid_value)
 
       Rails.logger.debug "ds_orcid_id: #{orcid_id}"
 
-      if orcid_id && OrcidValidator.orcid_id_is_valid?(orcid_id)
-        response = ExternalApis::OrcidService.fetch_record(orcid_id)
+      if orcid_id && Nova::OrcidValidator.orcid_id_is_valid?(orcid_id)
+        response = Nova::ExternalApis::OrcidService.fetch_record(orcid_id)
 
         if response.status == 200
           body = JSON.parse(response.body)
