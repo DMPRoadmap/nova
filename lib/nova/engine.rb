@@ -8,10 +8,5 @@ module Nova
       end
     end
 
-    # Expose assets to host app
-    initializer "nova.assets.precompile" do |app|
-      app.config.assets.precompile += %w[nova/application.js]
-    end
-
   end
 end
