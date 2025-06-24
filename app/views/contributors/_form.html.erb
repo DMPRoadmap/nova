@@ -85,3 +85,79 @@ roles_tooltip = _("Select each role that applies to the contributor.")
                                class: "btn btn-secondary" %>
   </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("search_orcid_btn");
+    if (!btn) return;
+
+    btn.addEventListener("click", () => {
+      const orcidInput = document.getElementById("contributor_identifiers_attributes_0_value");
+      const notificationArea = document.getElementById("notification-area");
+      const orcidId = orcidInput ? orcidInput.value.trim() : "";
+
+      // Helper to reset and show notification
+      function showNotification(message) {
+        if (!notificationArea) return;
+        notificationArea.className = "notification-area alert alert-warning d-block";
+        notificationArea.setAttribute("role", "alert");
+
+        // Remove all span children
+        while (notificationArea.firstChild) {
+          notificationArea.removeChild(notificationArea.firstChild);
+        }
+
+        const spanNotice = document.createElement("span");
+        spanNotice.className = "aria-only";
+        spanNotice.textContent = "Notice: ";
+        notificationArea.appendChild(spanNotice);
+
+        const spanMsg = document.createElement("span");
+        spanMsg.textContent = message;
+        notificationArea.appendChild(spanMsg);
+      }
+
+      if (orcidId === "") {
+        showNotification("Please enter an ORCID ID.");
+        return;
+      }
+
+      // User entered ORCID ID — make AJAX request
+      const orcidIdEncoded = encodeURIComponent(orcidId);
+      fetch(`/orcid_records/?orcid_id=${orcidIdEncoded}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data && data.status_code && data.status_code[0] === "2") {
+            const contributorName = document.getElementById("contributor_name");
+            if (contributorName) contributorName.value = data.name || "";
+
+            const contributorEmail = document.getElementById("contributor_email");
+            if (contributorEmail) contributorEmail.value = data.email || "";
+
+            const contributorOrgId = document.getElementById("contributor_org_id");
+            if (contributorOrgId) contributorOrgId.value = JSON.stringify(data.organization) || "";
+
+            const contributorOrgName = document.getElementById("contributor_org_name");
+            if (contributorOrgName) contributorOrgName.value = (data.organization && data.organization.name) || "";
+          } else if (data.status_code === "422") {
+            showNotification("The ORCID iD is invalid.");
+          } else if (data.status_code && data.status_code[0] === "4") {
+            showNotification("There was a problem with the request made to the ORCID system, and so the record could not be retrieved.");
+          } else if (data.status_code && data.status_code[0] === "5") {
+            showNotification("There was a problem in ORCID system, and so the record could not be retrieved.");
+          } else {
+            showNotification("There was a problem in the system, and so the project details could not be retrieved.");
+          }
+        })
+        .catch(() => {
+          showNotification("There was a network error, and so the record could not be retrieved.");
+        });
+    });
+  });
+</script>
+
