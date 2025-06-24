@@ -12,6 +12,4 @@ Gem::Specification.new do |spec|
   end
   # spec.add_dependency "rails", ">= 8.0.1"
   spec.add_dependency "rails", ">= 7.0.1"
-  # nova/nova.gemspec
-  # spec.add_dependency "jsbundling-rails"
 end
