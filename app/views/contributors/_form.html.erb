@@ -15,7 +15,7 @@ roles_tooltip = _("Select each role that applies to the contributor.")
       <%= orcid_fields.text_field :value, class: "form-control", placeholder: "e.g. 0000-0000-0000-0000" %>
       
     </div>
-    <div class="col-md-5 align-self-end">
+    <div class="col-md-5 ms-3 align-self-end">
       <%= button_tag(_("Search ORCID iD"),
       type: "button",
       class: "btn btn-primary mt-6 mb-0",
@@ -30,7 +30,7 @@ roles_tooltip = _("Select each role that applies to the contributor.")
     <%= form.label(:name, (' <span class="text-danger">*</span> ' + _("Name")).html_safe, class: "form-label") %>
     <%= form.text_field :name, class: "form-control", spellcheck: true %>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-5 ms-3">
     <%= form.label(:email, (' <span class="text-danger">*</span> ' + _("Email")).html_safe, class: "form-label") %>
     <%= form.email_field :email, class: "form-control" %>
   </div>
@@ -38,7 +38,7 @@ roles_tooltip = _("Select each role that applies to the contributor.")
 
 <!-- org -->
 <div class="form-control mb-3 row" id="contributor-org-controls">
-  <div class="col-md-12">
+  <div class="col-md-11">
     <%= render partial: org_partial,
                locals: { form: form,
                          orgs: orgs,
