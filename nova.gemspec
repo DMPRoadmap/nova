@@ -10,6 +10,5 @@ Gem::Specification.new do |spec|
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
   end
-  # spec.add_dependency "rails", ">= 8.0.1"
   spec.add_dependency "rails", ">= 7.0.1"
 end
