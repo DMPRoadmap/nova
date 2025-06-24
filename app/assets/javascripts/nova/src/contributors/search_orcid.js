@@ -1,100 +1,73 @@
-$(() => {
-  $('#search_orcid_btn').on('click', (e) => {
-    const orcidId = $('#contributor_identifiers_attributes_0_value').val();
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("search_orcid_btn").addEventListener("click", function (e) {
+    const orcidInput = document.getElementById("contributor_identifiers_attributes_0_value");
+    const orcidId = orcidInput ? orcidInput.value : '';
 
-    // check if orcid-id has been entered by user
-    if (
-      orcidId == '' ||
-      orcidId == null ||
-      orcidId == undefined
-    ) {
-      // user did not enter orcid-id
-      // inform user of outcome with flash message
-      $('#notification-area').removeClass();
-      $('#notification-area').addClass("notification-area alert alert-warning d-block");
-      $('#notification-area').attr('role', 'alert');
-      var spans = $('#notification-area span');
-      for (var i = 0; i < spans.length; i++) {
-        spans[i].remove(); 
-      };
-      $('#notification-area').append('<span class="aria-only">Notice: </span>');
-      $('#notification-area').append('<span>Please enter an ORCID ID.</span>');
-    } else {
-      // user entered orcid-id so try to retrieve the orcid record
-      // from orcid
-      const orcidIdEncoded = encodeURIComponent(orcidId);
-      $.ajax({
-        type: 'GET',
-        url: '/orcid_records/?orcid_id=' + orcidIdEncoded,
-        headers: {
-          'Accept': 'application/json'
-        },
-        complete: (jqXHR, textStatus) => { 
-          response = jqXHR.responseJSON;
+    const notificationArea = document.getElementById("notification-area");
 
-          if (response && response["status_code"][0] === '2') {
-            // set name
-            var contributor_name = $('#contributor_name');
-            contributor_name.val(response["name"]);
-            
-            // set email
-            $('#contributor_email').val(response["email"]);
+    function showNotification(message) {
+      if (!notificationArea) return;
 
-            // set org
-            $('#contributor_org_id').val(JSON.stringify(response["organization"]));
-            $('#contributor_org_name').val(response["organization"]["name"]);
+      notificationArea.className = "notification-area alert alert-warning d-block";
+      notificationArea.setAttribute("role", "alert");
 
-          } else if (response["status_code"] === '422') {
-            // call was unsuccessful, orcid-id is invalid
-            // inform user of outcome with flash message
-            $('#notification-area').removeClass();
-            $('#notification-area').addClass("notification-area alert alert-warning d-block");
-            $('#notification-area').attr('role', 'alert');
-            var spans = $('#notification-area span');
-            for (var i = 0; i < spans.length; i++) {
-              spans[i].remove(); 
-            };
-            $('#notification-area').append('<span class="aria-only">Notice: </span>');
-            $('#notification-area').append('<span>The ORCID iD is invalid.</span>');
-          } else if (response["status_code"][0] === '4') {
-            // call was unsuccessful, problem with call made by client
-            // inform user of outcome with flash message
-            $('#notification-area').removeClass();
-            $('#notification-area').addClass("notification-area alert alert-warning d-block");
-            $('#notification-area').attr('role', 'alert');
-            var spans = $('#notification-area span');
-            for (var i = 0; i < spans.length; i++) {
-              spans[i].remove(); 
-            };
-            $('#notification-area').append('<span class="aria-only">Notice: </span>');
-            $('#notification-area').append('<span>There was a problem with the request made to the ORCID system, and so the record could not be retrieved.</span>');
-          } else if (response["status_code"][0] === '5') {
-            // call was unsuccessful, problem with server
-            // inform user of outcome with flash message
-            $('#notification-area').removeClass();
-            $('#notification-area').addClass("notification-area alert alert-warning d-block");
-            $('#notification-area').attr('role', 'alert');
-            var spans = $('#notification-area span');
-            for (var i = 0; i < spans.length; i++) {
-              spans[i].remove(); 
-            };
-            $('#notification-area').append('<span class="aria-only">Notice: </span>');
-            $('#notification-area').append('<span>There was a problem in ORCID system, and so the record could not be retrieved.</span>');
-          } else {
-            // call was unsuccessful, reason not clear
-            // inform user of outcome with flash message
-            $('#notification-area').removeClass();
-            $('#notification-area').addClass("notification-area alert alert-warning d-block");
-            $('#notification-area').attr('role', 'alert');
-            var spans = $('#notification-area span');
-            for (var i = 0; i < spans.length; i++) {
-              spans[i].remove(); 
-            };
-            $('#notification-area').append('<span class="aria-only">Notice: </span>');
-            $('#notification-area').append('<span>There was a problem in the system, and so the project details could not be retrieved.</span>');
-          }
-        }
-      })
+      // Remove all <span> children
+      const spans = notificationArea.querySelectorAll("span");
+      spans.forEach(span => span.remove());
+
+      // Append new message
+      const screenReaderSpan = document.createElement("span");
+      screenReaderSpan.className = "aria-only";
+      screenReaderSpan.textContent = "Notice: ";
+
+      const messageSpan = document.createElement("span");
+      messageSpan.textContent = message;
+
+      notificationArea.appendChild(screenReaderSpan);
+      notificationArea.appendChild(messageSpan);
     }
-  })
-})
+
+    if (!orcidId) {
+      showNotification("Please enter an ORCID ID.");
+      return;
+    }
+
+    const orcidIdEncoded = encodeURIComponent(orcidId);
+    fetch(`/orcid_records/?orcid_id=${orcidIdEncoded}`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json"
+      }
+    })
+    .then(response => response.json().then(data => ({ status: response.status, body: data })))
+    .then(({ status, body }) => {
+      const statusCode = String(body["status_code"]);
+
+      if (statusCode.startsWith('2')) {
+        // Success
+        const nameField = document.getElementById("contributor_name");
+        const emailField = document.getElementById("contributor_email");
+        const orgIdField = document.getElementById("contributor_org_id");
+        const orgNameField = document.getElementById("contributor_org_name");
+
+        if (nameField) nameField.value = body["name"] || '';
+        if (emailField) emailField.value = body["email"] || '';
+        if (orgIdField) orgIdField.value = JSON.stringify(body["organization"]);
+        if (orgNameField) orgNameField.value = body["organization"]?.["name"] || '';
+
+      } else if (statusCode === '422') {
+        showNotification("The ORCID iD is invalid.");
+      } else if (statusCode.startsWith('4')) {
+        showNotification("There was a problem with the request made to the ORCID system, and so the record could not be retrieved.");
+      } else if (statusCode.startsWith('5')) {
+        showNotification("There was a problem in ORCID system, and so the record could not be retrieved.");
+      } else {
+        showNotification("There was a problem in the system, and so the project details could not be retrieved.");
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching ORCID record:", error);
+      showNotification("An unexpected error occurred while retrieving the ORCID record.");
+    });
+  });
+});
