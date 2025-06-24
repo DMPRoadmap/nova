@@ -94,10 +94,10 @@ roles_tooltip = _("Select each role that applies to the contributor.")
 
       const notificationArea = document.getElementById("notification-area");
 
-      function showNotification(message) {
+      function showNotification(message, type = "warning") {
         if (!notificationArea) return;
 
-        notificationArea.className = "notification-area alert alert-warning d-block";
+        notificationArea.className = `notification-area alert alert-${type} d-block`;
         notificationArea.setAttribute("role", "alert");
 
         // Remove all <span> children
@@ -138,12 +138,11 @@ roles_tooltip = _("Select each role that applies to the contributor.")
           const emailField = document.getElementById("contributor_email");
           const orgIdField = document.getElementById("contributor_org_id");
           const orgNameField = document.getElementById("contributor_org_name");
-
           if (nameField) nameField.value = body["name"] || '';
           if (emailField) emailField.value = body["email"] || '';
           if (orgIdField) orgIdField.value = JSON.stringify(body["organization"]);
           if (orgNameField) orgNameField.value = body["organization"]?.["name"] || '';
-
+          showNotification("ORCID record retrieved.", "info");
         } else if (statusCode === '422') {
           showNotification("The ORCID iD is invalid.");
         } else if (statusCode.startsWith('4')) {
