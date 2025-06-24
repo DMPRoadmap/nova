@@ -10,7 +10,7 @@ module Nova
       Rails.logger.debug "ds_ME_orcid_id: #{orcid_id}"
 
       if orcid_id && Nova::OrcidValidator.orcid_id_is_valid?(orcid_id)
-        response = Nova::ExternalApis::OrcidService.fetch_record(orcid_id)
+        response = Nova::OrcidService.fetch_record(orcid_id)
 
         Rails.logger.debug "ds_response_status: #{response.status}"
 
