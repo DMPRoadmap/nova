@@ -23,13 +23,6 @@ module Nova
       check_digit == digits[-1]
     end
 
-    def self.extract_orcid_id(orcid)
-      # Match and extract just the ORCID iD (with hyphens)
-      orcid_pattern = /(\d{4}-\d{4}-\d{4}-\d{3}[0-9X])/
-      match = orcid.match(orcid_pattern)
-      match ? match[1] : nil  # Return the ORCID ID if valid, otherwise nil
-    end
-
   end
 
 end
