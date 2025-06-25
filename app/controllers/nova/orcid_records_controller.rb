@@ -3,16 +3,10 @@ module Nova
     def show
       orcid_value = CGI.unescape(params[:orcid_id])
 
-      Rails.logger.debug "ds_ME_orcid_value: #{orcid_value}"
-
       orcid_id = Nova::OrcidValidator.extract_orcid_id(orcid_value)
-
-      Rails.logger.debug "ds_ME_orcid_id: #{orcid_id}"
 
       if orcid_id && Nova::OrcidValidator.orcid_id_is_valid?(orcid_id)
         response = Nova::OrcidService.fetch_record(orcid_id)
-
-        Rails.logger.debug "ds_response_status: #{response.status}"
 
         if response.status == 200
           body = JSON.parse(response.body)
