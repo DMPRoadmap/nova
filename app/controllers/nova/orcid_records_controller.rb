@@ -7,7 +7,6 @@ module Nova
 
       if orcid_id && Nova::OrcidValidator.orcid_id_is_valid?(orcid_id)
         response = Nova::OrcidService.fetch_record(orcid_id)
-
         if response.status == 200
           body = JSON.parse(response.body)
           name = body.dig("person", "name", "credit-name", "value")
@@ -16,6 +15,7 @@ module Nova
           resolved_org = resolve_org(organization)
           response_data = {
             status_code: response.status.to_s,
+            message: _("ORCID record retrieved."),
             name: name,
             email: email,
             organization: resolved_org
@@ -24,14 +24,13 @@ module Nova
         else 
           render json: {
             status_code: response.status.to_s,
-            message: "There was a problem retrieving the ORCiD record."
+            message: _("There was a problem retrieving the ORCiD record.")
           }
         end
-
       else 
         render json: {
           status_code: 422.to_s,
-          message: "The ORCID iD is not valid."
+          message: _("The ORCID iD is not valid.")
         }
       end
     end
