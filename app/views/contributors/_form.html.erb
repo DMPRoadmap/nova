@@ -151,7 +151,7 @@ roles_tooltip = _("Select each role that applies to the contributor.")
         } else if (statusCode.startsWith('5')) {
           showNotification("There was a problem in ORCID system, and so the record could not be retrieved.");
         } else {
-          showNotification("There was a problem in the system, and so the project details could not be retrieved.");
+          showNotification("There was a problem in the system, and so the record could not be retrieved.");
         }
       })
       .catch(error => {
